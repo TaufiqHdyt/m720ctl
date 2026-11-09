@@ -9,6 +9,12 @@ All notable changes are listed here. The format follows
 ### Changed
 - While waiting for permissions under launchd, the agent exits every ~10 s so
   launchd restarts it; a running process often doesn't notice a new grant.
+- While waiting under launchd, log one line per relaunch instead of the full
+  help text.
+
+### Fixed
+- The log file (`~/Library/Logs/m720ctl.log`) no longer grows without limit:
+  at startup, a log over 1 MB is trimmed to its newest 256 KB.
 
 ## [0.1.0] - 2026-11-09
 

@@ -113,6 +113,8 @@ launchctl print gui/$(id -u)/com.user.m720ctl | grep state
 tail -f ~/Library/Logs/m720ctl.log     # "event tap active" = working
 ```
 
+The log is trimmed to its newest 256 KB at startup once it passes 1 MB.
+
 After a config change, restart it with
 `launchctl kickstart -k gui/$(id -u)/com.user.m720ctl`.
 
