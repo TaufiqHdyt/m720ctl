@@ -143,12 +143,18 @@ turn Shift+scroll sideways would swap the axes back. By default, scrolls with
 Cmd, Ctrl, or Opt held together with Shift are passed through unchanged
 (`shift_only`).
 
+## Background
+
+`docs/` has notes from reverse engineering Logi Options' `LogiMgrDaemon`
+(static analysis only): `REPORT.md` covers the app's architecture,
+`device.md` covers how it talks to devices over HID++.
+
 ## Limitations
 
 - **Gesture button.** If `--watch` doesn't show it as a mouse button, it is
   only reachable through Logitech's HID++ protocol: the device's reprogrammable
-  controls feature, `0x1B04`, which can divert the button to software. That
-  path isn't implemented.
+  controls feature, `0x1B04`, which can divert the button to software (see
+  `docs/device.md`). That path isn't implemented.
 - **Not limited to the M720.** Any other wheel mouse's Shift+scroll, tilt /
   horizontal wheel, and extra buttons are rewritten too.
 - **Horizontal scrolling only via Shift + wheel.** Every other sideways scroll
