@@ -1,0 +1,37 @@
+# Copy to ~/.config/m720ctl/config.toml. Every key is optional.
+
+# Natural scrolling for the mouse wheel. Off = classic (wheel down scrolls
+# down), whatever System Settings says; the system setting then only applies
+# to the trackpad / Magic Mouse.
+natural_scroll = false
+
+# Shift + wheel scrolls horizontally.
+shift_scroll_horizontal = true
+# Flip the horizontal direction if it feels backwards.
+invert_horizontal = false
+# Only rewrite when Shift is the only modifier held (Cmd/Ctrl/Opt+Shift+scroll
+# is passed through untouched).
+shift_only = true
+
+# Horizontal scrolling only via Shift + wheel: every other sideways scroll from
+# a mouse (Shift + tilt, or tilt when tilt_enabled = false) is blocked.
+# Trackpad scrolling is never touched.
+horizontal_only_with_shift = true
+
+# Wheel tilt (push the wheel left/right) -> actions. The tilt's own sideways
+# scroll is always blocked while this is on. To get tilt sideways scrolling
+# back, set tilt_enabled = false AND horizontal_only_with_shift = false.
+tilt_enabled = true
+tilt_left = "desktop_left"
+tilt_right = "desktop_right"
+# Holding a tilt repeats; repeats closer together than this don't switch again.
+tilt_cooldown_ms = 300
+
+# Actions: mission_control, app_expose, desktop_left, desktop_right, none
+
+# macOS button number -> action. Find numbers with `m720ctl --watch`.
+# 2 = middle, 3 = back, 4 = forward. Left (0) / right (1) can't be remapped.
+# Unlisted buttons work normally (back/forward stay back/forward by default).
+# If present, this table replaces the built-in one (which is empty).
+[buttons]
+# "5" = "mission_control"   # gesture button, if --watch shows it as button 5
