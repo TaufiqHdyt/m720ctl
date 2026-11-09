@@ -8,8 +8,8 @@ compile_error!("m720ctl only supports Apple Silicon macOS (aarch64-apple-darwin)
 
 mod actions;
 mod buttons;
-mod natural;
 mod config;
+mod natural;
 mod permissions;
 mod scroll;
 mod tap;
@@ -66,7 +66,10 @@ fn main() -> ExitCode {
     match mode {
         Mode::Watch => {
             if tap::run_watch().is_err() {
-                eprintln!("m720ctl: could not create a listening event tap.\n{}", permissions::help());
+                eprintln!(
+                    "m720ctl: could not create a listening event tap.\n{}",
+                    permissions::help()
+                );
                 permissions::input_monitoring(true);
                 return ExitCode::FAILURE;
             }
@@ -132,7 +135,10 @@ fn run(config_path: Option<PathBuf>, verbose: bool) -> ExitCode {
             first = false;
         }
         // Log the current grant state right away and whenever it changes.
-        let status = (permissions::accessibility(false), permissions::input_monitoring(false));
+        let status = (
+            permissions::accessibility(false),
+            permissions::input_monitoring(false),
+        );
         if last_status != Some(status) {
             eprintln!(
                 "m720ctl: permissions: accessibility={}, input_monitoring={} (both must be true)",
@@ -141,7 +147,9 @@ fn run(config_path: Option<PathBuf>, verbose: bool) -> ExitCode {
             last_status = Some(status);
         }
         if under_launchd && started.elapsed() >= Duration::from_secs(10) {
-            eprintln!("m720ctl: no permissions yet; exiting so launchd restarts us with fresh state");
+            eprintln!(
+                "m720ctl: no permissions yet; exiting so launchd restarts us with fresh state"
+            );
             return ExitCode::from(1);
         }
         std::thread::sleep(Duration::from_secs(2));

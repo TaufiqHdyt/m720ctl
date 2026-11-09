@@ -2,8 +2,12 @@
 name = "m720ctl"
 version = "0.1.0"
 edition = "2021"
-description = "Minimal Logi Options replacement for an M720 on Apple Silicon: shift-scroll and button remapping via a CGEventTap"
+description = "Minimal Logi Options replacement for the Logitech M720 on Apple Silicon macOS: Shift+scroll, wheel tilt to switch desktops, per-mouse scroll direction"
 license = "MIT"
+repository = "https://github.com/TaufiqHdyt/m720ctl"
+readme = "README.md"
+keywords = ["macos", "logitech", "mouse", "scroll", "cgeventtap"]
+categories = ["command-line-utilities", "os::macos-apis"]
 publish = false
 
 [dependencies]

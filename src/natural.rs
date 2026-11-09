@@ -32,7 +32,8 @@ pub fn needs_flip(continuous: bool, inverted: bool, natural: bool) -> bool {
 /// Make a discrete wheel event scroll in the configured direction. Returns
 /// true if the event was changed.
 pub fn apply(event: &CGEvent, natural: bool) -> bool {
-    let continuous = event.get_integer_value_field(EventField::SCROLL_WHEEL_EVENT_IS_CONTINUOUS) != 0;
+    let continuous =
+        event.get_integer_value_field(EventField::SCROLL_WHEEL_EVENT_IS_CONTINUOUS) != 0;
     let inverted = event.get_integer_value_field(DIRECTION_INVERTED) != 0;
     if !needs_flip(continuous, inverted, natural) {
         return false;
@@ -86,8 +87,14 @@ mod tests {
         assert!(ints.iter().all(|v| *v != 0), "{ints:?}");
 
         assert!(apply(&ev, false));
-        assert_eq!(INT_FIELDS.map(|f| ev.get_integer_value_field(f)), ints.map(|v| -v));
-        assert_eq!(FIXED_FIELDS.map(|f| ev.get_double_value_field(f)), fixed.map(|v| -v));
+        assert_eq!(
+            INT_FIELDS.map(|f| ev.get_integer_value_field(f)),
+            ints.map(|v| -v)
+        );
+        assert_eq!(
+            FIXED_FIELDS.map(|f| ev.get_double_value_field(f)),
+            fixed.map(|v| -v)
+        );
         assert_eq!(ev.get_integer_value_field(DIRECTION_INVERTED), 0);
 
         // Second pass is a no-op: it now matches the config.
@@ -99,12 +106,18 @@ mod tests {
         let ev = wheel_event(-3, 0);
         ev.set_integer_value_field(DIRECTION_INVERTED, 0);
         assert!(!apply(&ev, false));
-        assert_eq!(ev.get_integer_value_field(EventField::SCROLL_WHEEL_EVENT_DELTA_AXIS_1), -3);
+        assert_eq!(
+            ev.get_integer_value_field(EventField::SCROLL_WHEEL_EVENT_DELTA_AXIS_1),
+            -3
+        );
 
         let ev = wheel_event(-3, 0);
         ev.set_integer_value_field(DIRECTION_INVERTED, 1);
         ev.set_integer_value_field(EventField::SCROLL_WHEEL_EVENT_IS_CONTINUOUS, 1);
         assert!(!apply(&ev, false));
-        assert_eq!(ev.get_integer_value_field(EventField::SCROLL_WHEEL_EVENT_DELTA_AXIS_1), -3);
+        assert_eq!(
+            ev.get_integer_value_field(EventField::SCROLL_WHEEL_EVENT_DELTA_AXIS_1),
+            -3
+        );
     }
 }

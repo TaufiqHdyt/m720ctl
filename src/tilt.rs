@@ -70,7 +70,10 @@ pub struct Debounce {
 
 impl Debounce {
     pub fn new(cooldown: Duration) -> Self {
-        Debounce { cooldown, last: None }
+        Debounce {
+            cooldown,
+            last: None,
+        }
     }
 
     /// Record a tilt event; returns true if it should fire the action.

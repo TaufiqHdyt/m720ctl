@@ -1,7 +1,10 @@
 # m720ctl
 
+[![CI](https://github.com/TaufiqHdyt/m720ctl/actions/workflows/ci.yml/badge.svg)](https://github.com/TaufiqHdyt/m720ctl/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A small replacement for Logi Options for a **Logitech M720 Triathlon paired over
-Bluetooth**, on **Apple Silicon macOS**. It does three things:
+Bluetooth**, on **Apple Silicon macOS**. It does four things:
 
 1. **Shift + scroll wheel → horizontal scroll**
 2. **Wheel tilt left/right → Desktop Left / Desktop Right** (back/forward
@@ -12,12 +15,23 @@ Bluetooth**, on **Apple Silicon macOS**. It does three things:
 
 It doesn't talk to the mouse over HID++. macOS already delivers the M720's
 wheel and buttons as normal input events, and m720ctl rewrites them with one
-`CGEventTap`. It is about 700 lines of Rust, tests included, and uses no private APIs.
+`CGEventTap`. It is about 1,200 lines of Rust, tests included, and uses no private APIs.
 
 It does **not** do device filtering. The rewrite applies to any mouse's wheel
 tilt, and extra buttons. Trackpad and Magic Mouse scrolling are left alone because
 they send continuous scroll events, which m720ctl skips. Battery, SmartShift,
 DPI, Flow, gestures, and cloud features are not included.
+
+## Quick start
+
+```sh
+git clone https://github.com/TaufiqHdyt/m720ctl.git
+cd m720ctl
+./dist/install.sh
+```
+
+Then turn on `m720ctl` under **Accessibility** and **Input Monitoring** in
+System Settings → Privacy & Security (details in [step 3](#3-install-as-a-login-agent)).
 
 ## Requirements
 
@@ -163,3 +177,19 @@ Cmd, Ctrl, or Opt held together with Shift are passed through unchanged
   scrolling are not affected.
 - **Secure input.** While a password field has focus, macOS may pause the
   tap. m720ctl turns it back on automatically.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Changes are listed in
+[CHANGELOG.md](CHANGELOG.md). Report security problems privately as described in
+[SECURITY.md](SECURITY.md).
+
+## License
+
+[MIT](LICENSE).
+
+m720ctl is an independent project. It is not affiliated with, endorsed by, or
+supported by Logitech. Logitech, Logi, and M720 Triathlon are trademarks of
+Logitech. The notes in `docs/` come from static analysis of software installed
+on the author's own Mac, done for interoperability; they contain no Logitech
+binaries or source code.

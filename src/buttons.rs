@@ -36,14 +36,32 @@ mod tests {
             buttons: [(3, Action::DesktopLeft), (4, Action::DesktopRight)].into(),
             ..Config::default()
         };
-        assert_eq!(classify(CGEventType::OtherMouseDown, 3, &cfg), Verdict::Fire(Action::DesktopLeft));
-        assert_eq!(classify(CGEventType::OtherMouseUp, 3, &cfg), Verdict::Swallow);
-        assert_eq!(classify(CGEventType::OtherMouseDragged, 4, &cfg), Verdict::Swallow);
-        assert_eq!(classify(CGEventType::OtherMouseDown, 2, &cfg), Verdict::Pass);
+        assert_eq!(
+            classify(CGEventType::OtherMouseDown, 3, &cfg),
+            Verdict::Fire(Action::DesktopLeft)
+        );
+        assert_eq!(
+            classify(CGEventType::OtherMouseUp, 3, &cfg),
+            Verdict::Swallow
+        );
+        assert_eq!(
+            classify(CGEventType::OtherMouseDragged, 4, &cfg),
+            Verdict::Swallow
+        );
+        assert_eq!(
+            classify(CGEventType::OtherMouseDown, 2, &cfg),
+            Verdict::Pass
+        );
         assert_eq!(classify(CGEventType::OtherMouseUp, 2, &cfg), Verdict::Pass);
         // Defaults: back/forward pass through untouched.
         let def = Config::default();
-        assert_eq!(classify(CGEventType::OtherMouseDown, 3, &def), Verdict::Pass);
-        assert_eq!(classify(CGEventType::OtherMouseDown, 4, &def), Verdict::Pass);
+        assert_eq!(
+            classify(CGEventType::OtherMouseDown, 3, &def),
+            Verdict::Pass
+        );
+        assert_eq!(
+            classify(CGEventType::OtherMouseDown, 4, &def),
+            Verdict::Pass
+        );
     }
 }

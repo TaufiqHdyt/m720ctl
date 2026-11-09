@@ -76,10 +76,22 @@ mod tests {
         let shift = CGEventFlags::CGEventFlagShift;
         assert!(wants_rewrite(shift, &cfg));
         assert!(!wants_rewrite(CGEventFlags::CGEventFlagNull, &cfg));
-        assert!(!wants_rewrite(shift | CGEventFlags::CGEventFlagCommand, &cfg));
-        let loose = Config { shift_only: false, ..Config::default() };
-        assert!(wants_rewrite(shift | CGEventFlags::CGEventFlagCommand, &loose));
-        let off = Config { shift_scroll_horizontal: false, ..Config::default() };
+        assert!(!wants_rewrite(
+            shift | CGEventFlags::CGEventFlagCommand,
+            &cfg
+        ));
+        let loose = Config {
+            shift_only: false,
+            ..Config::default()
+        };
+        assert!(wants_rewrite(
+            shift | CGEventFlags::CGEventFlagCommand,
+            &loose
+        ));
+        let off = Config {
+            shift_scroll_horizontal: false,
+            ..Config::default()
+        };
         assert!(!wants_rewrite(shift, &off));
     }
 
@@ -108,7 +120,10 @@ mod tests {
 
     #[test]
     fn invert_and_passthrough() {
-        let inv = Config { invert_horizontal: true, ..Config::default() };
+        let inv = Config {
+            invert_horizontal: true,
+            ..Config::default()
+        };
         let ev = wheel_event(2);
         ev.set_flags(CGEventFlags::CGEventFlagShift);
         assert!(rewrite(&ev, &inv));

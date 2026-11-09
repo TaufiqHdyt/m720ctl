@@ -85,8 +85,8 @@ pub fn load(explicit: Option<&Path>) -> Result<Config, String> {
             _ => return Ok(Config::default()),
         },
     };
-    let text = std::fs::read_to_string(&path)
-        .map_err(|e| format!("reading {}: {e}", path.display()))?;
+    let text =
+        std::fs::read_to_string(&path).map_err(|e| format!("reading {}: {e}", path.display()))?;
     let parsed = parse(&text).map_err(|e| format!("{}: {e}", path.display()))?;
     eprintln!("m720ctl: loaded config from {}", path.display());
     Ok(parsed)
@@ -132,7 +132,9 @@ fn parse(text: &str) -> Result<Config, String> {
             if n <= 1 {
                 // Left/right go through LeftMouse*/RightMouse* events, which
                 // this tool deliberately never touches.
-                return Err(format!("[buttons] button {n} (left/right click) can't be remapped"));
+                return Err(format!(
+                    "[buttons] button {n} (left/right click) can't be remapped"
+                ));
             }
             buttons.insert(n, action);
         }

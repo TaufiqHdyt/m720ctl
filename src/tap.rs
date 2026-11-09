@@ -9,8 +9,8 @@ use core_foundation::base::TCFType;
 use core_foundation::mach_port::CFMachPortRef;
 use core_foundation::runloop::{kCFRunLoopCommonModes, CFRunLoop};
 use core_graphics::event::{
-    CGEvent, CGEventFlags, CGEventTap, CGEventTapLocation, CGEventTapOptions,
-    CGEventTapPlacement, CGEventType, CallbackResult, EventField,
+    CGEvent, CGEventFlags, CGEventTap, CGEventTapLocation, CGEventTapOptions, CGEventTapPlacement,
+    CGEventType, CallbackResult, EventField,
 };
 
 use crate::buttons::{self, Verdict};
@@ -28,7 +28,10 @@ extern "C" {
 static TAP_PORT: AtomicPtr<c_void> = AtomicPtr::new(std::ptr::null_mut());
 
 fn reenable_if_disabled(etype: CGEventType) -> bool {
-    if matches!(etype, CGEventType::TapDisabledByTimeout | CGEventType::TapDisabledByUserInput) {
+    if matches!(
+        etype,
+        CGEventType::TapDisabledByTimeout | CGEventType::TapDisabledByUserInput
+    ) {
         eprintln!("m720ctl: event tap disabled by system ({etype:?}); re-enabling");
         let port = TAP_PORT.load(Ordering::Acquire);
         if !port.is_null() {
@@ -41,7 +44,10 @@ fn reenable_if_disabled(etype: CGEventType) -> bool {
 
 /// Install `tap` on this thread's run loop and run forever.
 fn run(tap: CGEventTap<'static>) -> ! {
-    TAP_PORT.store(tap.mach_port().as_concrete_TypeRef() as *mut c_void, Ordering::Release);
+    TAP_PORT.store(
+        tap.mach_port().as_concrete_TypeRef() as *mut c_void,
+        Ordering::Release,
+    );
     let source = tap
         .mach_port()
         .create_runloop_source(0)
@@ -54,7 +60,11 @@ fn run(tap: CGEventTap<'static>) -> ! {
 
 /// Try to create the active remapping tap. Fails without Accessibility.
 pub fn create_remap_tap(cfg: Config, verbose: bool) -> Result<CGEventTap<'static>, ()> {
-    let mut events = vec![CGEventType::OtherMouseDown, CGEventType::OtherMouseUp, CGEventType::OtherMouseDragged];
+    let mut events = vec![
+        CGEventType::OtherMouseDown,
+        CGEventType::OtherMouseUp,
+        CGEventType::OtherMouseDragged,
+    ];
     if cfg.shift_scroll_horizontal || cfg.tilt_enabled || cfg.horizontal_only_with_shift {
         events.push(CGEventType::ScrollWheel);
     }
@@ -113,8 +123,11 @@ pub fn create_remap_tap(cfg: Config, verbose: bool) -> Result<CGEventTap<'static
                         }
                     }
                 }
-                CGEventType::OtherMouseDown | CGEventType::OtherMouseUp | CGEventType::OtherMouseDragged => {
-                    let button = event.get_integer_value_field(EventField::MOUSE_EVENT_BUTTON_NUMBER);
+                CGEventType::OtherMouseDown
+                | CGEventType::OtherMouseUp
+                | CGEventType::OtherMouseDragged => {
+                    let button =
+                        event.get_integer_value_field(EventField::MOUSE_EVENT_BUTTON_NUMBER);
                     match buttons::classify(etype, button, &cfg) {
                         Verdict::Pass => CallbackResult::Keep,
                         Verdict::Swallow => CallbackResult::Drop,
@@ -134,7 +147,11 @@ pub fn create_remap_tap(cfg: Config, verbose: bool) -> Result<CGEventTap<'static
 fn classify_horizontal(event: &CGEvent, cfg: &Config) -> Horizontal {
     // Classify in device direction, so tilt left is left whatever the system
     // natural scrolling setting is.
-    let sign = if event.get_integer_value_field(natural::DIRECTION_INVERTED) != 0 { -1 } else { 1 };
+    let sign = if event.get_integer_value_field(natural::DIRECTION_INVERTED) != 0 {
+        -1
+    } else {
+        1
+    };
     tilt::classify(
         sign * event.get_integer_value_field(EventField::SCROLL_WHEEL_EVENT_DELTA_AXIS_1),
         sign * event.get_integer_value_field(EventField::SCROLL_WHEEL_EVENT_DELTA_AXIS_2),
@@ -157,8 +174,16 @@ pub fn run_watch() -> Result<std::convert::Infallible, ()> {
         CGEventTapPlacement::HeadInsertEventTap,
         CGEventTapOptions::ListenOnly,
         vec![
-            LeftMouseDown, LeftMouseUp, RightMouseDown, RightMouseUp,
-            OtherMouseDown, OtherMouseUp, ScrollWheel, KeyDown, KeyUp, FlagsChanged,
+            LeftMouseDown,
+            LeftMouseUp,
+            RightMouseDown,
+            RightMouseUp,
+            OtherMouseDown,
+            OtherMouseUp,
+            ScrollWheel,
+            KeyDown,
+            KeyUp,
+            FlagsChanged,
         ],
         |_proxy, etype, event: &CGEvent| {
             if !reenable_if_disabled(etype) {
@@ -235,14 +260,32 @@ mod tests {
         let cfg = Config::default();
         let none = CGEventFlags::CGEventFlagNull;
         // natural=1 means macOS negated the deltas: h=1 is device h=-1 = right.
-        assert_eq!(classify_horizontal(&watched(0, 1, 1, none), &cfg), Horizontal::Tilt(Dir::Right));
-        assert_eq!(classify_horizontal(&watched(0, -1, 1, none), &cfg), Horizontal::Tilt(Dir::Left));
+        assert_eq!(
+            classify_horizontal(&watched(0, 1, 1, none), &cfg),
+            Horizontal::Tilt(Dir::Right)
+        );
+        assert_eq!(
+            classify_horizontal(&watched(0, -1, 1, none), &cfg),
+            Horizontal::Tilt(Dir::Left)
+        );
         // Same physical tilts with system natural scrolling off.
-        assert_eq!(classify_horizontal(&watched(0, -1, 0, none), &cfg), Horizontal::Tilt(Dir::Right));
-        assert_eq!(classify_horizontal(&watched(0, 1, 0, none), &cfg), Horizontal::Tilt(Dir::Left));
+        assert_eq!(
+            classify_horizontal(&watched(0, -1, 0, none), &cfg),
+            Horizontal::Tilt(Dir::Right)
+        );
+        assert_eq!(
+            classify_horizontal(&watched(0, 1, 0, none), &cfg),
+            Horizontal::Tilt(Dir::Left)
+        );
         // Shift + tilt is blocked, plain wheel is left for the other handlers.
         let shift = CGEventFlags::CGEventFlagShift;
-        assert_eq!(classify_horizontal(&watched(0, 1, 1, shift), &cfg), Horizontal::Block);
-        assert_eq!(classify_horizontal(&watched(-1, 0, 1, none), &cfg), Horizontal::NotNative);
+        assert_eq!(
+            classify_horizontal(&watched(0, 1, 1, shift), &cfg),
+            Horizontal::Block
+        );
+        assert_eq!(
+            classify_horizontal(&watched(-1, 0, 1, none), &cfg),
+            Horizontal::NotNative
+        );
     }
 }
