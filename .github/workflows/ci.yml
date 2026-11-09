@@ -13,7 +13,7 @@ jobs:
     # Apple Silicon runner: the crate only builds for aarch64-apple-darwin.
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
