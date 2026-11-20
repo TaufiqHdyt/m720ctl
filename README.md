@@ -125,10 +125,13 @@ permission grant to the exact build, so when a **changed** build is installed,
 remove the old `m720ctl` entries with `-` and add them again. Re-running
 `install.sh` on an unchanged build keeps the existing grant (signing is
 deterministic, and the script skips the copy). To keep the grant across
-rebuilds, sign with a real identity from your keychain:
+rebuilds, sign with a real identity from your keychain. Replace the example
+identity with the exact name or hash printed by `security find-identity`.
 
 ```sh
-M720CTL_SIGN_IDENTITY="Apple Development: you@example.com" ./dist/install.sh
+security find-identity -v -p codesigning
+M720CTL_SIGN_IDENTITY="Apple Development: Your Name (TEAMID)" ./dist/install.sh
+codesign --verify --strict ~/.local/bin/m720ctl
 ```
 
 ## Uninstall
