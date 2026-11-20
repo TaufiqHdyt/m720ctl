@@ -29,6 +29,14 @@ cp "$ROOT/target/release/m720ctl" "$STAGED"
 codesign --sign "$IDENTITY" --force --identifier "$LABEL" "$STAGED"
 
 mkdir -p "$BIN_DIR" "$(dirname "$PLIST")" "$(dirname "$LOG")"
+PLIST_STAGED="$(mktemp "${PLIST}.XXXXXX")"
+trap 'rm -f "$PLIST_STAGED"' EXIT
+cp "$ROOT/dist/$LABEL.plist" "$PLIST_STAGED"
+plutil -replace ProgramArguments.0 -string "$BIN" "$PLIST_STAGED"
+plutil -replace StandardOutPath -string "$LOG" "$PLIST_STAGED"
+plutil -replace StandardErrorPath -string "$LOG" "$PLIST_STAGED"
+plutil -lint -s "$PLIST_STAGED"
+
 if launchctl print "$DOMAIN/$LABEL" >/dev/null 2>&1; then
     echo "==> Stopping running agent"
     launchctl bootout "$DOMAIN/$LABEL" 2>/dev/null || launchctl unload "$PLIST" 2>/dev/null || true
@@ -46,8 +54,7 @@ else
 fi
 
 echo "==> Installing $PLIST"
-sed -e "s|__BIN__|$BIN|g" -e "s|__LOG__|$LOG|g" "$ROOT/dist/$LABEL.plist" > "$PLIST"
-plutil -lint -s "$PLIST"
+mv -f "$PLIST_STAGED" "$PLIST"
 
 echo "==> Loading agent"
 launchctl bootstrap "$DOMAIN" "$PLIST" 2>/dev/null || launchctl load -w "$PLIST"

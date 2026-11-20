@@ -60,14 +60,13 @@ fn run(tap: CGEventTap<'static>) -> ! {
 
 /// Try to create the active remapping tap. Fails without Accessibility.
 pub fn create_remap_tap(cfg: Config, verbose: bool) -> Result<CGEventTap<'static>, ()> {
-    let mut events = vec![
+    // Scroll direction is normalized even when the other scroll features are off.
+    let events = vec![
         CGEventType::OtherMouseDown,
         CGEventType::OtherMouseUp,
         CGEventType::OtherMouseDragged,
+        CGEventType::ScrollWheel,
     ];
-    if cfg.shift_scroll_horizontal || cfg.tilt_enabled || cfg.horizontal_only_with_shift {
-        events.push(CGEventType::ScrollWheel);
-    }
     let debounce = Mutex::new(Debounce::new(Duration::from_millis(cfg.tilt_cooldown_ms)));
     CGEventTap::new(
         CGEventTapLocation::Session,

@@ -136,7 +136,9 @@ fn parse(text: &str) -> Result<Config, String> {
                     "[buttons] button {n} (left/right click) can't be remapped"
                 ));
             }
-            buttons.insert(n, action);
+            if buttons.insert(n, action).is_some() {
+                return Err(format!("[buttons] button {n} is mapped more than once"));
+            }
         }
         cfg.buttons = buttons;
     }
@@ -195,5 +197,12 @@ mod tests {
         assert!(parse("[buttons]\n\"1\" = \"desktop_left\"").is_err());
         assert!(parse("[buttons]\n\"3\" = \"launch_rockets\"").is_err());
         assert!(parse("typo_key = true").is_err());
+    }
+
+    #[test]
+    fn rejects_duplicate_button_numbers() {
+        let error =
+            parse("[buttons]\n\"3\" = \"desktop_left\"\n\"03\" = \"desktop_right\"").unwrap_err();
+        assert_eq!(error, "[buttons] button 3 is mapped more than once");
     }
 }
