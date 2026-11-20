@@ -32,7 +32,7 @@ mkdir -p "$BIN_DIR" "$(dirname "$PLIST")" "$(dirname "$LOG")"
 PLIST_STAGED="$(mktemp "${PLIST}.XXXXXX")"
 trap 'rm -f "$PLIST_STAGED"' EXIT
 cp "$ROOT/dist/$LABEL.plist" "$PLIST_STAGED"
-plutil -replace ProgramArguments.0 -string "$BIN" "$PLIST_STAGED"
+plutil -replace Program -string "$BIN" "$PLIST_STAGED"
 plutil -replace StandardOutPath -string "$LOG" "$PLIST_STAGED"
 plutil -replace StandardErrorPath -string "$LOG" "$PLIST_STAGED"
 plutil -lint -s "$PLIST_STAGED"

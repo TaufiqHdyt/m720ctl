@@ -6,10 +6,8 @@
 <dict>
     <key>Label</key>
     <string>com.user.m720ctl</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>__BIN__</string>
-    </array>
+    <key>Program</key>
+    <string>__BIN__</string>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
